@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Scholar 查询生成器</title>
+    <style>
+        .journal-columns {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .journal-column {
+            flex: 1;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <h1>Google Scholar 查询生成器</h1>
@@ -20,16 +34,95 @@
         <input type="text" id="endYear" placeholder="结束年份（如 2023）">
         <br><br>
 
-        <label>期刊分类:</label>
-        <select id="journalType">
-            <option value="top">顶刊</option>
-            <option value="common">常用期刊</option>
-        </select>
-        <br><br>
+        <div class="journal-columns">
+            <!-- 顶刊 -->
+            <div class="journal-column">
+                <h3>顶刊</h3>
+                <label><input type="checkbox" name="journal" value="Academy of Management Journal"> Academy of Management Journal</label>
+                <label><input type="checkbox" name="journal" value="Academy of Management Review"> Academy of Management Review</label>
+                <label><input type="checkbox" name="journal" value="Accounting, Organizations and Society"> Accounting, Organizations and Society</label>
+                <label><input type="checkbox" name="journal" value="Administrative Science Quarterly"> Administrative Science Quarterly</label>
+                <label><input type="checkbox" name="journal" value="American Economic Review"> American Economic Review</label>
+                <label><input type="checkbox" name="journal" value="Contemporary Accounting Research"> Contemporary Accounting Research</label>
+                <label><input type="checkbox" name="journal" value="Econometrica"> Econometrica</label>
+                <label><input type="checkbox" name="journal" value="Entrepreneurship Theory and Practice"> Entrepreneurship Theory and Practice</label>
+                <label><input type="checkbox" name="journal" value="Harvard Business Review"> Harvard Business Review</label>
+                <label><input type="checkbox" name="journal" value="Human Relations"> Human Relations</label>
+                <label><input type="checkbox" name="journal" value="Human Resource Management"> Human Resource Management</label>
+                <label><input type="checkbox" name="journal" value="Information Systems Research"> Information Systems Research</label>
+                <label><input type="checkbox" name="journal" value="Journal of Accounting and Economics"> Journal of Accounting and Economics</label>
+                <label><input type="checkbox" name="journal" value="Journal of Accounting Research"> Journal of Accounting Research</label>
+                <label><input type="checkbox" name="journal" value="Journal of Applied Psychology"> Journal of Applied Psychology</label>
+                <label><input type="checkbox" name="journal" value="Journal of Business Ethics"> Journal of Business Ethics</label>
+                <label><input type="checkbox" name="journal" value="Journal of Business Venturing"> Journal of Business Venturing</label>
+                <label><input type="checkbox" name="journal" value="Journal of Consumer Psychology"> Journal of Consumer Psychology</label>
+                <label><input type="checkbox" name="journal" value="Journal of Consumer Research"> Journal of Consumer Research</label>
+                <label><input type="checkbox" name="journal" value="Journal of Finance"> Journal of Finance</label>
+                <label><input type="checkbox" name="journal" value="Journal of Financial and Quantitative Analysis"> Journal of Financial and Quantitative Analysis</label>
+                <label><input type="checkbox" name="journal" value="Journal of Financial Economics"> Journal of Financial Economics</label>
+                <label><input type="checkbox" name="journal" value="Journal of International Business Studies"> Journal of International Business Studies</label>
+                <label><input type="checkbox" name="journal" value="Journal of Management"> Journal of Management</label>
+                <label><input type="checkbox" name="journal" value="Journal of Management Information Systems"> Journal of Management Information Systems</label>
+                <label><input type="checkbox" name="journal" value="Journal of Management Studies"> Journal of Management Studies</label>
+                <label><input type="checkbox" name="journal" value="Journal of Marketing"> Journal of Marketing</label>
+                <label><input type="checkbox" name="journal" value="Journal of Marketing Research"> Journal of Marketing Research</label>
+                <label><input type="checkbox" name="journal" value="Journal of Operations Management"> Journal of Operations Management</label>
+                <label><input type="checkbox" name="journal" value="Journal of Political Economy"> Journal of Political Economy</label>
+                <label><input type="checkbox" name="journal" value="Journal of the Academy of Marketing Science"> Journal of the Academy of Marketing Science</label>
+                <label><input type="checkbox" name="journal" value="Management Science"> Management Science</label>
+                <label><input type="checkbox" name="journal" value="M&SOM-MANUFACTURING & SERVICE OPERATIONS MANAGEMENT"> M&SOM-MANUFACTURING & SERVICE OPERATIONS MANAGEMENT</label>
+                <label><input type="checkbox" name="journal" value="Marketing Science"> Marketing Science</label>
+                <label><input type="checkbox" name="journal" value="MIS Quarterly"> MIS Quarterly</label>
+                <label><input type="checkbox" name="journal" value="Operations Research"> Operations Research</label>
+                <label><input type="checkbox" name="journal" value="Organization Science"> Organization Science</label>
+                <label><input type="checkbox" name="journal" value="Organization Studies"> Organization Studies</label>
+                <label><input type="checkbox" name="journal" value="Organizational Behavior and Human Decision Processes"> Organizational Behavior and Human Decision Processes</label>
+                <label><input type="checkbox" name="journal" value="Production and Operations Management"> Production and Operations Management</label>
+                <label><input type="checkbox" name="journal" value="Quarterly Journal of Economics"> Quarterly Journal of Economics</label>
+                <label><input type="checkbox" name="journal" value="Research Policy"> Research Policy</label>
+                <label><input type="checkbox" name="journal" value="Review of Accounting Studies"> Review of Accounting Studies</label>
+                <label><input type="checkbox" name="journal" value="Review of Economic Studies"> Review of Economic Studies</label>
+                <label><input type="checkbox" name="journal" value="Review of Finance"> Review of Finance</label>
+                <label><input type="checkbox" name="journal" value="Sloan Management Review"> Sloan Management Review</label>
+                <label><input type="checkbox" name="journal" value="Strategic Entrepreneurship Journal"> Strategic Entrepreneurship Journal</label>
+                <label><input type="checkbox" name="journal" value="Strategic Management Journal"> Strategic Management Journal</label>
+                <label><input type="checkbox" name="journal" value="The Accounting Review"> The Accounting Review</label>
+                <label><input type="checkbox" name="journal" value="INFORMS Journal on Computing"> INFORMS Journal on Computing</label>
+                <label><input type="checkbox" name="journal" value="Review of Financial Studies"> Review of Financial Studies</label>
+            </div>
+
+            <!-- 常用顶刊 -->
+            <div class="journal-column">
+                <h3>常用顶刊</h3>
+                <label><input type="checkbox" name="journal" value="Strategic Management Journal"> Strategic Management Journal</label>
+                <label><input type="checkbox" name="journal" value="Journal of Marketing"> Journal of Marketing</label>
+                <label><input type="checkbox" name="journal" value="Journal of Marketing Research"> Journal of Marketing Research</label>
+                <label><input type="checkbox" name="journal" value="Journal of Operations Management"> Journal of Operations Management</label>
+                <label><input type="checkbox" name="journal" value="Production and Operations Management"> Production and Operations Management</label>
+                <label><input type="checkbox" name="journal" value="Harvard Business Review"> Harvard Business Review</label>
+                <label><input type="checkbox" name="journal" value="Management Science"> Management Science</label>
+                <label><input type="checkbox" name="journal" value="M&SOM-MANUFACTURING & SERVICE OPERATIONS MANAGEMENT"> M&SOM-MANUFACTURING & SERVICE OPERATIONS MANAGEMENT</label>
+                <label><input type="checkbox" name="journal" value="Marketing Science"> Marketing Science</label>
+            </div>
+
+            <!-- 常用期刊 -->
+            <div class="journal-column">
+                <h3>常用期刊</h3>
+                <label><input type="checkbox" name="journal" value="OMEGA-INTERNATIONAL JOURNAL OF MANAGEMENT SCIENCE"> OMEGA-INTERNATIONAL JOURNAL OF MANAGEMENT SCIENCE</label>
+                <label><input type="checkbox" name="journal" value="International Journal of Production Research"> International Journal of Production Research</label>
+                <label><input type="checkbox" name="journal" value="International Journal of Production Economics"> International Journal of Production Economics</label>
+                <label><input type="checkbox" name="journal" value="IEEE Transactions on Engineering Management"> IEEE Transactions on Engineering Management</label>
+                <label><input type="checkbox" name="journal" value="European Journal of Operational Research"> European Journal of Operational Research</label>
+                <label><input type="checkbox" name="journal" value="Computers & Operations Research"> Computers & Operations Research</label>
+                <label><input type="checkbox" name="journal" value="Annals of Operations Research"> Annals of Operations Research</label>
+                <label><input type="checkbox" name="journal" value="Transportation Research Part*"> Transportation Research Part*</label>
+                <label><input type="checkbox" name="journal" value="Transportation Science"> Transportation Science</label>
+            </div>
+        </div>
 
         <button type="submit">查询</button>
     </form>
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
