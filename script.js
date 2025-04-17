@@ -61,7 +61,7 @@
 
             // 处理必须不包含的关键词（用逗号分隔）
             if (excludeKeywords) {
-                const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-SU%='${k}'`).join("");
+                const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-'${k}'`).join("");
                 query += excludeQuery;
             }
 
