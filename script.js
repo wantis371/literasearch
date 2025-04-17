@@ -25,9 +25,10 @@
             event.preventDefault(); // 阻止表单默认提交行为
 
             // 获取输入值
-            const keywords = document.getElementById("keywords").value;
-            const startYear = document.getElementById("startYear").value;
-            const endYear = document.getElementById("endYear").value;
+            const keywords = document.getElementById("keywords").value.trim();
+            const excludeKeywords = document.getElementById("excludeKeywords").value.trim();
+            const startYear = document.getElementById("startYear").value.trim();
+            const endYear = document.getElementById("endYear").value.trim();
 
             // 获取选中的期刊
             const selectedJournals = Array.from(document.querySelectorAll('input[name="journal"]:checked'))
@@ -40,19 +41,27 @@
             });
 
             // 生成查询 URL
-            const queryUrl = generateQueryUrl(keywords, startYear, endYear, selectedJournals, isChineseJournal);
+            const queryUrl = generateQueryUrl(keywords, excludeKeywords, startYear, endYear, selectedJournals, isChineseJournal);
 
             // 跳转到查询页面
             window.open(queryUrl, "_blank");
         });
 
-        function generateQueryUrl(keywords, startYear, endYear, journals, isChineseJournal) {
-            let query = keywords;
+        function generateQueryUrl(keywords, excludeKeywords, startYear, endYear, journals, isChineseJournal) {
+            // 处理多个关键词
+            const keywordQuery = keywords.split(" ").map(k => `SU%='${k}'`).join(" and ");
+            let query = keywordQuery;
+
+            // 处理必须不包含的关键词
+            if (excludeKeywords) {
+                const excludeQuery = excludeKeywords.split(" ").map(k => `not SU%='${k}'`).join(" and ");
+                query += ` and ${excludeQuery}`;
+            }
 
             // 如果是中文期刊，跳转到知网
             if (isChineseJournal) {
-                const journalQuery = journals.join(" ");
-                return `https://kns.cnki.net/kns8/defaultresult/index?kw=${encodeURIComponent(query)} ${encodeURIComponent(journalQuery)}`;
+                const journalQuery = journals.map(journal => `'${journal}'`).join("+");
+                return `https://kns.cnki.net/kns8s/AdvSearch?type=expert&classid=WD0FTY92&rlang=CHINESE&query=${encodeURIComponent(query)} and LY%=(${journalQuery})`;
             }
 
             // 否则跳转到 Google Scholar
@@ -73,3 +82,4 @@
 
             return queryUrl;
         }
+ 
