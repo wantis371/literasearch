@@ -68,7 +68,7 @@
             // 如果是中文期刊，生成知网检索式
             if (isChineseJournal) {
                 const journalQuery = journals.map(journal => `'${journal}'`).join("+");
-                return `SU%='${keywords}'${excludeKeywords ? `-'${excludeKeywords}'` : ''} and LY%=(${journalQuery})`;
+                return `SU%='${keywords}'${excludeKeywords ? `-'${excludeKeywords}'` : ''} and LY=(${journalQuery})`;
             }
 
             // 否则生成 Google Scholar 检索式
