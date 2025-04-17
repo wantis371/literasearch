@@ -1,4 +1,3 @@
-
         // 全选功能
         document.getElementById("selectAllUTD24").addEventListener("change", function () {
             const checkboxes = document.querySelectorAll("#utd24-journals input[type='checkbox']");
@@ -43,28 +42,36 @@
             // 生成查询 URL
             const queryUrl = generateQueryUrl(keywords, excludeKeywords, startYear, endYear, selectedJournals, isChineseJournal);
 
+            // 显示检索式
+            const queryResult = document.getElementById("queryResult");
+            queryResult.innerHTML = `<strong>生成的检索式：</strong><br>${queryUrl}`;
+
             // 跳转到查询页面
-            window.open(queryUrl, "_blank");
+            if (isChineseJournal) {
+                window.open("https://kns.cnki.net/kns8s/AdvSearch?type=expert&classid=WD0FTY92&rlang=CHINESE", "_blank");
+            } else {
+                window.open(queryUrl, "_blank");
+            }
         });
 
         function generateQueryUrl(keywords, excludeKeywords, startYear, endYear, journals, isChineseJournal) {
             // 处理关键词（用逗号分隔）
-            const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => `'${k}'`).join("+");
+            const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => `SU%='${k}'`).join("+");
             let query = keywordQuery;
 
             // 处理必须不包含的关键词（用逗号分隔）
             if (excludeKeywords) {
-                const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-'${k}'`).join("");
+                const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-SU%='${k}'`).join("");
                 query += excludeQuery;
             }
 
-            // 如果是中文期刊，跳转到知网
+            // 如果是中文期刊，生成知网检索式
             if (isChineseJournal) {
                 const journalQuery = journals.map(journal => `'${journal}'`).join("+");
-                return `https://kns.cnki.net/kns8s/AdvSearch?type=expert&classid=WD0FTY92&rlang=CHINESE&query=${encodeURIComponent(query)} and LY%=(${journalQuery})`;
+                return `SU%='${keywords}'${excludeKeywords ? `-SU%='${excludeKeywords}'` : ''} and LY%=(${journalQuery})`;
             }
 
-            // 否则跳转到 Google Scholar
+            // 否则生成 Google Scholar 检索式
             if (journals.length > 0) {
                 const journalQuery = journals.map(journal => `source:${journal}`).join(" OR ");
                 query += ` AND (${journalQuery})`;
