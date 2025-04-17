@@ -56,7 +56,7 @@
 
         function generateQueryUrl(keywords, excludeKeywords, startYear, endYear, journals, isChineseJournal) {
             // 处理关键词（用逗号分隔）
-            const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => `SU%='${k}'`).join("+");
+            const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => `'${k}'`).join("+");
             let query = keywordQuery;
 
             // 处理必须不包含的关键词（用逗号分隔）
@@ -68,7 +68,7 @@
             // 如果是中文期刊，生成知网检索式
             if (isChineseJournal) {
                 const journalQuery = journals.map(journal => `'${journal}'`).join("+");
-                return `SU%='${keywords}'${excludeKeywords ? `-SU%='${excludeKeywords}'` : ''} and LY%=(${journalQuery})`;
+                return `SU%='${keywords}'${excludeKeywords ? `-'${excludeKeywords}'` : ''} and LY%=(${journalQuery})`;
             }
 
             // 否则生成 Google Scholar 检索式
