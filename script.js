@@ -83,7 +83,7 @@
             const journalType = document.getElementById("journalType").value;
 
             // 根据期刊分类选择期刊列表
-            const journals = journalType === "top" ? topJournals : commonJournals;
+            const journals = journalType === "top" ? topJournals: commonJournals;
 
             // 生成查询 URL
             const queryUrl = generateQueryUrl(keywords, startYear, endYear, journals);
@@ -93,13 +93,15 @@
         });
 
         function generateQueryUrl(keywords, startYear, endYear, journals) {
-            let queryUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(keywords)}`;
-
-            // 添加期刊过滤条件
+            // 将关键词和期刊过滤条件合并
+            let query = keywords;
             if (journals.length > 0) {
                 const journalQuery = journals.map(journal => `SO=(${journal})`).join(" OR ");
-                queryUrl += `&as_sdt=0,5&as_vis=1&q=${encodeURIComponent(journalQuery)}`;
+                query += ` AND (${journalQuery})`;
             }
+
+            // 生成查询 URL
+            let queryUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`;
 
             // 添加年份范围
             if (startYear) {
