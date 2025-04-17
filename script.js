@@ -48,14 +48,14 @@
         });
 
         function generateQueryUrl(keywords, excludeKeywords, startYear, endYear, journals, isChineseJournal) {
-            // 处理多个关键词
-            const keywordQuery = keywords.split(" ").map(k => `SU%='${k}'`).join(" and ");
+            // 处理关键词（用逗号分隔）
+            const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => `SU%='${k}'`).join("+");
             let query = keywordQuery;
 
-            // 处理必须不包含的关键词
+            // 处理必须不包含的关键词（用逗号分隔）
             if (excludeKeywords) {
-                const excludeQuery = excludeKeywords.split(" ").map(k => `not SU%='${k}'`).join(" and ");
-                query += ` and ${excludeQuery}`;
+                const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-SU%='${k}'`).join("");
+                query += excludeQuery;
             }
 
             // 如果是中文期刊，跳转到知网
@@ -66,7 +66,7 @@
 
             // 否则跳转到 Google Scholar
             if (journals.length > 0) {
-                const journalQuery = journals.map(journal => `SO=(${journal})`).join(" OR ");
+                const journalQuery = journals.map(journal => `source:${journal}`).join(" OR ");
                 query += ` AND (${journalQuery})`;
             }
 
@@ -82,4 +82,3 @@
 
             return queryUrl;
         }
- 
