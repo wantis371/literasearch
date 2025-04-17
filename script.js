@@ -49,12 +49,12 @@
 
         function generateQueryUrl(keywords, excludeKeywords, startYear, endYear, journals, isChineseJournal) {
             // 处理关键词（用逗号分隔）
-            const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => `SU%='${k}'`).join("+");
+            const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => '${k}').join("+");
             let query = keywordQuery;
 
             // 处理必须不包含的关键词（用逗号分隔）
             if (excludeKeywords) {
-                const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-SU%='${k}'`).join("");
+                const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-'${k}'`).join("");
                 query += excludeQuery;
             }
 
