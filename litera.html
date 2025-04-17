@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文献一键查询</title>
+  <style>
+    .journal-group {
+      margin: 10px 0;
+    }
+    .journal-group button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>文献一键查询</h1>
+  <form id="searchForm">
+    <label for="keywords">关键词：</label>
+    <input type="text" id="keywords" placeholder="请输入关键词" required>
+    <br><br>
+
+    <label>期刊来源：</label>
+    <div>
+      <select id="journal" multiple size="5">
+        <option value="Nature">Nature</option>
+        <option value="Science">Science</option>
+        <option value="IEEE">IEEE</option>
+        <option value="Elsevier">Elsevier</option>
+        <option value="Springer">Springer</option>
+        <option value="Cell">Cell</option>
+        <option value="PNAS">PNAS</option>
+      </select>
+    </div>
+    <div class="journal-group">
+      <button type="button" onclick="selectJournals(['Nature', 'Science', 'Cell'])">选择顶级期刊</button>
+      <button type="button" onclick="selectJournals(['IEEE', 'Elsevier', 'Springer'])">选择工程期刊</button>
+    </div>
+    <br>
+
+    <label for="author">作者：</label>
+    <input type="text" id="author" placeholder="请输入作者">
+    <br><br>
+
+    <label for="year">时间范围：</label>
+    <input type="number" id="startYear" placeholder="起始年份" min="1900" max="2099">
+    <input type="number" id="endYear" placeholder="结束年份" min="1900" max="2099">
+    <br><br>
+
+    <button type="submit">查询</button>
+  </form>
+
+  <script src="script.js"></script>
+</body>
+</html>
