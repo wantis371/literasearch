@@ -10,6 +10,16 @@
             checkboxes.forEach(checkbox => checkbox.checked = this.checked);
         });
 
+        document.getElementById("selectAllCommon").addEventListener("change", function () {
+            const checkboxes = document.querySelectorAll("#common-journals input[type='checkbox']");
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+
+        document.getElementById("selectAllChinese").addEventListener("change", function () {
+            const checkboxes = document.querySelectorAll("#chinese-journals input[type='checkbox']");
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+
         // 表单提交
         document.getElementById("queryForm").addEventListener("submit", function (event) {
             event.preventDefault(); // 阻止表单默认提交行为
