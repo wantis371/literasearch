@@ -28,10 +28,14 @@
             border: 1px solid #ccc;
             background-color: #f9f9f9;
         }
+        #queryForm button {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>文献查询生成器</h1>
+    <div id="queryResult"></div>
     <form id="queryForm">
         <label for="keywords">关键词（多个关键词用逗号分隔）:</label>
         <input type="text" id="keywords" placeholder="输入关键词" required>
@@ -41,6 +45,10 @@
         <input type="text" id="excludeKeywords" placeholder="输入必须不包含的关键词">
         <br><br>
 
+        <label for="authors">作者（多个作者用逗号分隔）:</label>
+        <input type="text" id="authors" placeholder="输入作者">
+        <br><br>
+
         <label for="startYear">起始年份:</label>
         <input type="text" id="startYear" placeholder="起始年份（如 2020）">
         <br><br>
@@ -48,6 +56,8 @@
         <label for="endYear">结束年份:</label>
         <input type="text" id="endYear" placeholder="结束年份（如 2023）">
         <br><br>
+
+        <button type="submit">查询</button>
 
         <div class="journal-columns">
             <!-- UTD24 期刊 -->
@@ -163,13 +173,7 @@
                 </div>
             </div>
         </div>
-
-        <button type="submit">查询</button>
     </form>
-
-    <div id="queryResult"></div>
-
-   
     <script src="script.js"></script>
 </body>
 </html>
