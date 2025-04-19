@@ -27,15 +27,40 @@
             padding: 10px;
             border: 1px solid #ccc;
             background-color: #f9f9f9;
+            position: relative;
+        }
+        #copyButton {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #copyButton:hover {
+            background-color: #0056b3;
         }
         #queryForm button {
             margin-bottom: 20px;
+        }
+        .year-range {
+            display: flex;
+            gap: 10px;
+        }
+        .year-range input {
+            flex: 1;
         }
     </style>
 </head>
 <body>
     <h1>文献搜搜</h1>
-    <div id="queryResult"></div>
+    <div id="queryResult">
+        <strong>生成的检索式：</strong><br>
+        <span id="queryText"></span>
+        <button id="copyButton">复制</button>
+    </div>
     <form id="queryForm">
         <label for="keywords">关键词（多个关键词用逗号分隔）:</label>
         <input type="text" id="keywords" placeholder="输入关键词" required>
@@ -49,12 +74,20 @@
         <input type="text" id="authors" placeholder="输入作者">
         <br><br>
 
-        <label for="startYear">起始年份:</label>
-        <input type="text" id="startYear" placeholder="起始年份（如 2020）">
+        <div class="year-range">
+            <div>
+                <label for="startYear">起始年份:</label>
+                <input type="text" id="startYear" placeholder="起始年份（如 2020）">
+            </div>
+            <div>
+                <label for="endYear">结束年份:</label>
+                <input type="text" id="endYear" placeholder="结束年份（如 2023）">
+            </div>
+        </div>
         <br><br>
 
-        <label for="endYear">结束年份:</label>
-        <input type="text" id="endYear" placeholder="结束年份（如 2023）">
+        <label for="otherJournals">其他期刊（多个期刊用逗号分隔）:</label>
+        <input type="text" id="otherJournals" placeholder="输入未列出的期刊">
         <br><br>
 
         <button type="submit">查询</button>
@@ -94,7 +127,7 @@
 
             <!-- FT50 期刊 -->
             <div class="journal-column">
-                <h3>FT50 期刊</h3>
+                <h3>FT50 期刊(除UTD24的27本)</h3>
                 <label><input type="checkbox" id="selectAllFT50"> 全选</label>
                 <div id="ft50-journals">
                     <label><input type="checkbox" name="journal" value="Accounting, Organizations and Society"> Accounting, Organizations and Society</label>
