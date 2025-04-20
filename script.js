@@ -84,7 +84,7 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
         if (isChineseJournal) {
             query += isPrecise ? `SU=('${keywordList.join("' * '")}')` : `SU%=('${keywordList.join("' + '")}')`;
         } else {
-            query += isPrecise ? `("${keywordList.join('" and "')}")` : `(${keywordList.join(" and ")})`;
+            query += isPrecise ? `(${keywordList.join('" and "')})` : `(${keywordList.join(" and ")})`;
         }
     }
 
@@ -94,7 +94,7 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
         if (isChineseJournal) {
             query += ` - ('${excludeKeywordList.join("'- '")}')`;
         } else {
-            query += ` not "${excludeKeywordList.join('" not "')}"`;
+            query += ` not ${excludeKeywordList.join('" not "')}`;
         }
     }
 
@@ -130,13 +130,13 @@ function generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear,
     // 处理关键词
     if (keywords) {
         const keywordList = keywords.split(",").map(k => k.trim()).filter(k => k);
-        query += isPrecise ? `"${keywordList.join('" AND "')}"` : keywordList.join(" OR ");
+        query += isPrecise ? `${keywordList.join('" AND "')}` : keywordList.join(" OR ");
     }
 
     // 处理排除关键词
     if (excludeKeywords) {
         const excludeKeywordList = excludeKeywords.split(",").map(k => k.trim()).filter(k => k);
-        query += isPrecise ? ` NOT "${excludeKeywordList.join('" NOT "')}"` : ` -${excludeKeywordList.join(" NOT ")}`;
+        query += isPrecise ? ` NOT ${excludeKeywordList.join('" NOT "')}` : ` -${excludeKeywordList.join(" NOT ")}`;
     }
 
     // 处理作者
