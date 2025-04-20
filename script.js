@@ -60,7 +60,7 @@ function handleQuery(isPrecise) {
     });
 
     // 生成检索式
-    const queryExpression = generateQueryExpression(keywords, excludeKeywords, authors, startYear, endYear, selectedJournals, isChineseJournal, otherJournals, isPrecise);
+    const queryExpression = generateQueryExpression(keywords, excludeKeywords, authors, selectedJournals, isChineseJournal, isPrecise);
 
     // 显示检索式
     document.getElementById("queryText").innerText = queryExpression;
@@ -75,63 +75,49 @@ function handleQuery(isPrecise) {
 }
 
 // 生成检索式
-function generateQueryExpression(keywords, excludeKeywords, authors, startYear, endYear, journals, isChineseJournal, otherJournals, isPrecise) {
+function generateQueryExpression(keywords, excludeKeywords, authors, journals, isChineseJournal, isPrecise) {
     let query = "";
 
     // 处理关键词
     if (keywords) {
-        const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => {
-            if (isChineseJournal) {
-                return isPrecise ? `SU='${k}'` : `SU%='${k}'`;
-            } else {
-                return isPrecise ? `"${k}"` : k;
-            }
-        }).join(isPrecise ? " AND " : " OR ");
-        query += keywordQuery;
+        const keywordList = keywords.split(",").map(k => k.trim()).filter(k => k);
+        if (isChineseJournal) {
+            query += isPrecise ? `SU=('${keywordList.join("' * '")}')` : `SU%=('${keywordList.join("' + '")}')`;
+        } else {
+            query += isPrecise ? `("${keywordList.join('" and "')}")` : `(${keywordList.join(" and ")})`;
+        }
     }
 
-    // 处理必须不包含的关键词
+    // 处理排除关键词
     if (excludeKeywords) {
-        const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => {
-            if (isChineseJournal) {
-                return isPrecise ? `-SU='${k}'` : `-SU%='${k}'`;
-            } else {
-                return isPrecise ? `-"${k}"` : `-${k}`;
-            }
-        }).join("");
-        query += excludeQuery;
+        const excludeKeywordList = excludeKeywords.split(",").map(k => k.trim()).filter(k => k);
+        if (isChineseJournal) {
+            query += ` - ('${excludeKeywordList.join("', '")}')`;
+        } else {
+            query += ` not "${excludeKeywordList.join('" not "')}"`;
+        }
     }
 
     // 处理作者
     if (authors) {
-        const authorQuery = authors.split(",").map(a => a.trim()).filter(a => a).map(a => {
-            if (isChineseJournal) {
-                return isPrecise ? `AU='${a}'` : `AU%='${a}'`;
-            } else {
-                return isPrecise ? `author:"${a}"` : `author:${a}`;
-            }
-        }).join(isPrecise ? " AND " : " OR ");
-        query += isChineseJournal ? `+${authorQuery}` : ` AND (${authorQuery})`;
+        const authorList = authors.split(",").map(a => a.trim()).filter(a => a);
+        if (isChineseJournal) {
+            query += isPrecise ? ` and AU='${authorList.join("', '")}'` : ` and AU%='${authorList.join("', '")}'`;
+        } else {
+            query += ` AND (author:"${authorList.join('" OR author:"')}")`;
+        }
     }
 
     // 处理期刊
     if (journals.length > 0) {
-        const journalQuery = journals.map(journal => {
+        const journalList = journals.map(journal => {
             if (isChineseJournal) {
                 return isPrecise ? `'${journal}'` : `'${journal}'`;
             } else {
                 return isPrecise ? `source:"${journal}"` : `source:${journal}`;
             }
         }).join(isPrecise ? " AND " : " OR ");
-        query += isChineseJournal ? ` and LY%=(${journalQuery})` : ` AND (${journalQuery})`;
-    }
-
-    // 处理其他期刊
-    if (otherJournals) {
-        const otherJournalQuery = otherJournals.split(",").map(j => j.trim()).filter(j => j).map(j => {
-            return isPrecise ? `source:"${j}"` : `source:${j}`;
-        }).join(isPrecise ? " AND " : " OR ");
-        query += ` AND (${otherJournalQuery})`;
+        query += isChineseJournal ? ` and LY=(${journalList})` : ` AND (${journalList})`;
     }
 
     return query;
@@ -143,42 +129,34 @@ function generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear,
 
     // 处理关键词
     if (keywords) {
-        const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => {
-            return isPrecise ? `"${k}"` : k;
-        }).join(isPrecise ? " AND " : " OR ");
-        query += keywordQuery;
+        const keywordList = keywords.split(",").map(k => k.trim()).filter(k => k);
+        query += isPrecise ? `"${keywordList.join('" AND "')}"` : keywordList.join(" OR ");
     }
 
-    // 处理必须不包含的关键词
+    // 处理排除关键词
     if (excludeKeywords) {
-        const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => {
-            return isPrecise ? `-"${k}"` : `-${k}`;
-        }).join("");
-        query += excludeQuery;
+        const excludeKeywordList = excludeKeywords.split(",").map(k => k.trim()).filter(k => k);
+        query += isPrecise ? ` NOT "${excludeKeywordList.join('" NOT "')}"` : ` -${excludeKeywordList.join(" -")}`;
     }
 
     // 处理作者
     if (authors) {
-        const authorQuery = authors.split(",").map(a => a.trim()).filter(a => a).map(a => {
-            return isPrecise ? `author:"${a}"` : `author:${a}`;
-        }).join(isPrecise ? " AND " : " OR ");
-        query += ` AND (${authorQuery})`;
+        const authorList = authors.split(",").map(a => a.trim()).filter(a => a);
+        query += isPrecise ? ` AND author:"${authorList.join('" OR author:"')}"` : ` AND author:${authorList.join(" OR author:")}`;
     }
 
     // 处理期刊
     if (journals.length > 0) {
-        const journalQuery = journals.map(journal => {
+        const journalList = journals.map(journal => {
             return isPrecise ? `source:"${journal}"` : `source:${journal}`;
-        }).join(isPrecise ? " AND " : " OR ");
-        query += ` AND (${journalQuery})`;
+        }).join(" OR ");
+        query += ` AND (${journalList})`;
     }
 
     // 处理其他期刊
     if (otherJournals) {
-        const otherJournalQuery = otherJournals.split(",").map(j => j.trim()).filter(j => j).map(j => {
-            return isPrecise ? `source:"${j}"` : `source:${j}`;
-        }).join(isPrecise ? " AND " : " OR ");
-        query += ` AND (${otherJournalQuery})`;
+        const otherJournalList = otherJournals.split(",").map(j => j.trim()).filter(j => j);
+        query += isPrecise ? ` AND source:"${otherJournalList.join('" OR source:"')}"` : ` AND source:${otherJournalList.join(" OR source:")}`;
     }
 
     let queryUrl = `https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`;
