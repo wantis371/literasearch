@@ -82,9 +82,11 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
     if (keywords) {
         const keywordList = keywords.split(",").map(k => k.trim()).filter(k => k);
         if (isChineseJournal) {
-            query += isPrecise ? `SU=('${keywordList.join("' * '")}')` : `SU%=('${keywordList.join("' + '")}')`;
+            // 中文期刊：关键词用单引号，模糊检索时等号前加%
+            query += isPrecise ? `SU=('${keywordList.join("' + '")}')` : `SU%=('${keywordList.join("' + '")}')`;
         } else {
-            query += isPrecise ? `(${keywordList.join('" and "')})` : `(${keywordList.join(" and ")})`;
+            // 英文期刊：精准检索时关键词用双引号
+            query += isPrecise ? `("${keywordList.join('" AND "')}")` : `(${keywordList.join(" AND ")})`;
         }
     }
 
@@ -92,9 +94,11 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
     if (excludeKeywords) {
         const excludeKeywordList = excludeKeywords.split(",").map(k => k.trim()).filter(k => k);
         if (isChineseJournal) {
-            query += ` - ('${excludeKeywordList.join("'- '")}')`;
+            // 中文期刊：排除关键词用单引号，模糊检索时等号前加%
+            query += isPrecise ? ` - SU=('${excludeKeywordList.join("' + '")}')` : ` - SU%=('${excludeKeywordList.join("' + '")}')`;
         } else {
-            query += ` not ${excludeKeywordList.join('" not "')}`;
+            // 英文期刊：排除关键词用 NOT 连接，精准检索时用双引号
+            query += isPrecise ? ` NOT ("${excludeKeywordList.join('" NOT "')}")` : ` NOT (${excludeKeywordList.join(" NOT ")})`;
         }
     }
 
@@ -102,9 +106,11 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
     if (authors) {
         const authorList = authors.split(",").map(a => a.trim()).filter(a => a);
         if (isChineseJournal) {
-            query += isPrecise ? ` and AU='${authorList.join("'+ '")}'` : ` and AU%='${authorList.join("'+ '")}'`;
+            // 中文期刊：作者用单引号，模糊检索时等号前加%
+            query += isPrecise ? ` and AU=('${authorList.join("' + '")}')` : ` and AU%=('${authorList.join("' + '")}')`;
         } else {
-            query += ` AND (author:"${authorList.join('" OR author:"')}")`;
+            // 英文期刊：作者用 OR 连接，精准检索时用双引号
+            query += isPrecise ? ` AND (author:"${authorList.join('" OR author:"')}")` : ` AND (author:${authorList.join(" OR author:")})`;
         }
     }
 
@@ -112,12 +118,14 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
     if (journals.length > 0) {
         const journalList = journals.map(journal => {
             if (isChineseJournal) {
+                // 中文期刊：期刊用单引号，模糊检索时等号前加%
                 return isPrecise ? `'${journal}'` : `'${journal}'`;
             } else {
+                // 英文期刊：期刊用 OR 连接，精准检索时用双引号
                 return isPrecise ? `source:"${journal}"` : `source:${journal}`;
             }
-        }).join(isPrecise ? " OR " : " OR ");
-        query += isChineseJournal ? ` and LY=(${journalList})` : ` OR (${journalList})`;
+        }).join(isChineseJournal ? " + " : " OR ");
+        query += isChineseJournal ? ` and LY=(${journalList})` : ` AND (${journalList})`;
     }
 
     return query;
@@ -130,13 +138,13 @@ function generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear,
     // 处理关键词
     if (keywords) {
         const keywordList = keywords.split(",").map(k => k.trim()).filter(k => k);
-        query += isPrecise ? `${keywordList.join('" AND "')}` : keywordList.join(" OR ");
+        query += isPrecise ? `"${keywordList.join('" AND "')}"` : keywordList.join(" OR ");
     }
 
     // 处理排除关键词
     if (excludeKeywords) {
         const excludeKeywordList = excludeKeywords.split(",").map(k => k.trim()).filter(k => k);
-        query += isPrecise ? ` NOT ${excludeKeywordList.join('" NOT "')}` : ` -${excludeKeywordList.join(" NOT ")}`;
+        query += isPrecise ? ` NOT ("${excludeKeywordList.join('" NOT "')}")` : ` NOT (${excludeKeywordList.join(" NOT ")})`;
     }
 
     // 处理作者
@@ -171,3 +179,4 @@ function generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear,
 
     return queryUrl;
 }
+
