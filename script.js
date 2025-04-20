@@ -92,7 +92,7 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
     if (excludeKeywords) {
         const excludeKeywordList = excludeKeywords.split(",").map(k => k.trim()).filter(k => k);
         if (isChineseJournal) {
-            query += ` - ('${excludeKeywordList.join("', '")}')`;
+            query += ` - ('${excludeKeywordList.join("'- '")}')`;
         } else {
             query += ` not "${excludeKeywordList.join('" not "')}"`;
         }
@@ -102,7 +102,7 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
     if (authors) {
         const authorList = authors.split(",").map(a => a.trim()).filter(a => a);
         if (isChineseJournal) {
-            query += isPrecise ? ` and AU='${authorList.join("', '")}'` : ` and AU%='${authorList.join("', '")}'`;
+            query += isPrecise ? ` and AU='${authorList.join("'+ '")}'` : ` and AU%='${authorList.join("'+ '")}'`;
         } else {
             query += ` AND (author:"${authorList.join('" OR author:"')}")`;
         }
@@ -116,7 +116,7 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
             } else {
                 return isPrecise ? `source:"${journal}"` : `source:${journal}`;
             }
-        }).join(isPrecise ? " AND " : " OR ");
+        }).join(isPrecise ? " OR " : " OR ");
         query += isChineseJournal ? ` and LY=(${journalList})` : ` OR (${journalList})`;
     }
 
