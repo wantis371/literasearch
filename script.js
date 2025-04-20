@@ -98,7 +98,7 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
             query += isPrecise ? ` - SU=('${excludeKeywordList.join("' + '")}')` : ` - SU%=('${excludeKeywordList.join("' + '")}')`;
         } else {
             // 英文期刊：排除关键词用 NOT 连接，精准检索时用双引号
-            query += isPrecise ? ` not "${excludeKeywordList.join('" not "')}"` : ` not ${excludeKeywordList.join(" not ")}`;
+            query += isPrecise ? ` NOT "${excludeKeywordList.join('" NOT "')}"` : ` not ${excludeKeywordList.join(" NOT ")}`;
         }
     }
 
