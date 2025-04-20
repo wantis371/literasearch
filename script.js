@@ -29,10 +29,18 @@ document.getElementById("copyButton").addEventListener("click", function () {
     });
 });
 
-// 表单提交
-document.getElementById("queryForm").addEventListener("submit", function (event) {
-    event.preventDefault(); // 阻止表单默认提交行为
+// 精准查询按钮
+document.getElementById("preciseQueryButton").addEventListener("click", function () {
+    handleQuery(true); // true 表示精准查询
+});
 
+// 模糊查询按钮
+document.getElementById("fuzzyQueryButton").addEventListener("click", function () {
+    handleQuery(false); // false 表示模糊查询
+});
+
+// 处理查询
+function handleQuery(isPrecise) {
     // 获取输入值
     const keywords = document.getElementById("keywords").value.trim();
     const excludeKeywords = document.getElementById("excludeKeywords").value.trim();
@@ -52,7 +60,7 @@ document.getElementById("queryForm").addEventListener("submit", function (event)
     });
 
     // 生成检索式
-    const queryExpression = generateQueryExpression(keywords, excludeKeywords, authors, startYear, endYear, selectedJournals, isChineseJournal, otherJournals);
+    const queryExpression = generateQueryExpression(keywords, excludeKeywords, authors, startYear, endYear, selectedJournals, isChineseJournal, otherJournals, isPrecise);
 
     // 显示检索式
     document.getElementById("queryText").innerText = queryExpression;
@@ -61,42 +69,68 @@ document.getElementById("queryForm").addEventListener("submit", function (event)
     if (isChineseJournal) {
         window.open("https://kns.cnki.net/kns8s/AdvSearch?type=expert&classid=WD0FTY92&rlang=CHINESE", "_blank");
     } else {
-        const queryUrl = generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear, endYear, selectedJournals, otherJournals);
+        const queryUrl = generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear, endYear, selectedJournals, otherJournals, isPrecise);
         window.open(queryUrl, "_blank");
     }
-});
+}
 
 // 生成检索式
-function generateQueryExpression(keywords, excludeKeywords, authors, startYear, endYear, journals, isChineseJournal, otherJournals) {
+function generateQueryExpression(keywords, excludeKeywords, authors, startYear, endYear, journals, isChineseJournal, otherJournals, isPrecise) {
     let query = "";
 
     // 处理关键词
     if (keywords) {
-        const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => `SU%='${k}'`).join("+");
+        const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => {
+            if (isChineseJournal) {
+                return isPrecise ? `SU='${k}'` : `SU%='${k}'`;
+            } else {
+                return isPrecise ? `"${k}"` : k;
+            }
+        }).join(isPrecise ? " AND " : " OR ");
         query += keywordQuery;
     }
 
     // 处理必须不包含的关键词
     if (excludeKeywords) {
-        const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-SU%='${k}'`).join("");
+        const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => {
+            if (isChineseJournal) {
+                return isPrecise ? `-SU='${k}'` : `-SU%='${k}'`;
+            } else {
+                return isPrecise ? `-"${k}"` : `-${k}`;
+            }
+        }).join("");
         query += excludeQuery;
     }
 
     // 处理作者
     if (authors) {
-        const authorQuery = authors.split(",").map(a => a.trim()).filter(a => a).map(a => isChineseJournal ? `AU='${a}'` : `author:"${a}"`).join(isChineseJournal ? "+" : " OR ");
+        const authorQuery = authors.split(",").map(a => a.trim()).filter(a => a).map(a => {
+            if (isChineseJournal) {
+                return isPrecise ? `AU='${a}'` : `AU%='${a}'`;
+            } else {
+                return isPrecise ? `author:"${a}"` : `author:${a}`;
+            }
+        }).join(isPrecise ? " AND " : " OR ");
         query += isChineseJournal ? `+${authorQuery}` : ` AND (${authorQuery})`;
     }
 
     // 处理期刊
     if (journals.length > 0) {
-        const journalQuery = journals.map(journal => isChineseJournal ? `'${journal}'` : `source:${journal}`).join(isChineseJournal ? "+" : " OR ");
+        const journalQuery = journals.map(journal => {
+            if (isChineseJournal) {
+                return isPrecise ? `'${journal}'` : `'${journal}'`;
+            } else {
+                return isPrecise ? `source:"${journal}"` : `source:${journal}`;
+            }
+        }).join(isPrecise ? " AND " : " OR ");
         query += isChineseJournal ? ` and LY%=(${journalQuery})` : ` AND (${journalQuery})`;
     }
 
     // 处理其他期刊
     if (otherJournals) {
-        const otherJournalQuery = otherJournals.split(",").map(j => j.trim()).filter(j => j).map(j => `source:${j}`).join(" OR ");
+        const otherJournalQuery = otherJournals.split(",").map(j => j.trim()).filter(j => j).map(j => {
+            return isPrecise ? `source:"${j}"` : `source:${j}`;
+        }).join(isPrecise ? " AND " : " OR ");
         query += ` AND (${otherJournalQuery})`;
     }
 
@@ -104,36 +138,46 @@ function generateQueryExpression(keywords, excludeKeywords, authors, startYear, 
 }
 
 // 生成 Google Scholar 查询 URL
-function generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear, endYear, journals, otherJournals) {
+function generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear, endYear, journals, otherJournals, isPrecise) {
     let query = "";
 
     // 处理关键词
     if (keywords) {
-        const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).join("+");
+        const keywordQuery = keywords.split(",").map(k => k.trim()).filter(k => k).map(k => {
+            return isPrecise ? `"${k}"` : k;
+        }).join(isPrecise ? " AND " : " OR ");
         query += keywordQuery;
     }
 
     // 处理必须不包含的关键词
     if (excludeKeywords) {
-        const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => `-${k}`).join("");
+        const excludeQuery = excludeKeywords.split(",").map(k => k.trim()).filter(k => k).map(k => {
+            return isPrecise ? `-"${k}"` : `-${k}`;
+        }).join("");
         query += excludeQuery;
     }
 
     // 处理作者
     if (authors) {
-        const authorQuery = authors.split(",").map(a => a.trim()).filter(a => a).map(a => `author:"${a}"`).join(" OR ");
+        const authorQuery = authors.split(",").map(a => a.trim()).filter(a => a).map(a => {
+            return isPrecise ? `author:"${a}"` : `author:${a}`;
+        }).join(isPrecise ? " AND " : " OR ");
         query += ` AND (${authorQuery})`;
     }
 
     // 处理期刊
     if (journals.length > 0) {
-        const journalQuery = journals.map(journal => `source:${journal}`).join(" OR ");
+        const journalQuery = journals.map(journal => {
+            return isPrecise ? `source:"${journal}"` : `source:${journal}`;
+        }).join(isPrecise ? " AND " : " OR ");
         query += ` AND (${journalQuery})`;
     }
 
     // 处理其他期刊
     if (otherJournals) {
-        const otherJournalQuery = otherJournals.split(",").map(j => j.trim()).filter(j => j).map(j => `source:${j}`).join(" OR ");
+        const otherJournalQuery = otherJournals.split(",").map(j => j.trim()).filter(j => j).map(j => {
+            return isPrecise ? `source:"${j}"` : `source:${j}`;
+        }).join(isPrecise ? " AND " : " OR ");
         query += ` AND (${otherJournalQuery})`;
     }
 
