@@ -117,7 +117,7 @@ function generateQueryExpression(keywords, excludeKeywords, authors, journals, i
                 return isPrecise ? `source:"${journal}"` : `source:${journal}`;
             }
         }).join(isPrecise ? " AND " : " OR ");
-        query += isChineseJournal ? ` and LY=(${journalList})` : ` AND (${journalList})`;
+        query += isChineseJournal ? ` and LY=(${journalList})` : ` OR (${journalList})`;
     }
 
     return query;
@@ -136,7 +136,7 @@ function generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear,
     // 处理排除关键词
     if (excludeKeywords) {
         const excludeKeywordList = excludeKeywords.split(",").map(k => k.trim()).filter(k => k);
-        query += isPrecise ? ` NOT "${excludeKeywordList.join('" NOT "')}"` : ` -${excludeKeywordList.join(" -")}`;
+        query += isPrecise ? ` NOT "${excludeKeywordList.join('" NOT "')}"` : ` -${excludeKeywordList.join(" NOT ")}`;
     }
 
     // 处理作者
