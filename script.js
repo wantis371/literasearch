@@ -180,7 +180,3 @@ function generateGoogleScholarUrl(keywords, excludeKeywords, authors, startYear,
     return queryUrl;
 }
 
-
-    return queryUrl;
-}
-
