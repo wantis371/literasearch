@@ -5,45 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文献搜搜</title>
     <style>
-        .journal-columns {
-            display: flex;
-            gap: 20px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
             margin-bottom: 20px;
         }
-        .journal-column {
-            flex: 1;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        label {
-            display: block;
-            margin: 5px 0;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 5px;
-            margin-bottom: 10px;
-        }
-        #queryResult {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
+        .query-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
             position: relative;
+        }
+        .query-result strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #2c3e50;
         }
         #copyButton {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 10px;
+            right: 10px;
             padding: 5px 10px;
-            background-color: #007bff;
+            background: #007bff;
             color: white;
             border: none;
+            border-radius: 3px;
             cursor: pointer;
+            transition: background 0.3s ease;
         }
         #copyButton:hover {
-            background-color: #0056b3;
+            background: #0056b3;
         }
-        #queryForm button {
-            margin-bottom: 20px;
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
         }
         .year-range {
             display: flex;
@@ -52,52 +76,95 @@
         .year-range input {
             flex: 1;
         }
+        .query-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .query-buttons button {
+            flex: 1;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .query-buttons button:hover {
+            background: #0056b3;
+        }
+        .journal-columns {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .journal-column {
+            flex: 1;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .journal-column h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .journal-column label {
+            display: block;
+            margin: 5px 0;
+            color: #333;
+        }
+        .journal-column input[type="checkbox"] {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
     <h1>文献搜搜</h1>
-    <div id="queryResult">
-        <strong>生成的检索式：</strong><br>
-        <span id="queryText"></span>
-        <button id="copyButton">复制</button>
-    </div>
-    <form id="queryForm">
-        <label for="keywords">关键词（多个关键词用逗号分隔）:</label>
-        <input type="text" id="keywords" placeholder="输入关键词" required>
-        <br><br>
-
-        <label for="excludeKeywords">必须不包含的关键词（多个关键词用逗号分隔）:</label>
-        <input type="text" id="excludeKeywords" placeholder="输入必须不包含的关键词">
-        <br><br>
-
-        <label for="authors">作者（多个作者用逗号分隔）:</label>
-        <input type="text" id="authors" placeholder="输入作者">
-        <br><br>
-
-        <div class="year-range">
-            <div>
-                <label for="startYear">起始年份:</label>
-                <input type="text" id="startYear" placeholder="起始年份（如 2020）">
-            </div>
-            <div>
-                <label for="endYear">结束年份:</label>
-                <input type="text" id="endYear" placeholder="结束年份（如 2023）">
-            </div>
+    <div class="container">
+        <div class="query-result">
+            <strong>生成的检索式：</strong>
+            <span id="queryText"></span>
+            <button id="copyButton">复制</button>
         </div>
-        <br><br>
-
-        <label for="otherJournals">其他期刊（多个期刊用逗号分隔）:</label>
-        <input type="text" id="otherJournals" placeholder="输入未列出的期刊">
-        <br><br>
-
-        <button type="submit">查询</button>
-
-        <div class="journal-columns">
-            <!-- UTD24 期刊 -->
-            <div class="journal-column">
-                <h3>UTD24 期刊</h3>
-                <label><input type="checkbox" id="selectAllUTD24"> 全选</label>
-                <div id="utd24-journals">
+        <form id="queryForm">
+            <div class="form-group">
+                <label for="keywords">关键词（多个关键词用逗号分隔）:</label>
+                <input type="text" id="keywords" placeholder="输入关键词" required>
+            </div>
+            <div class="form-group">
+                <label for="excludeKeywords">必须不包含的关键词（多个关键词用逗号分隔）:</label>
+                <input type="text" id="excludeKeywords" placeholder="输入必须不包含的关键词">
+            </div>
+            <div class="form-group">
+                <label for="authors">作者（多个作者用逗号分隔）:</label>
+                <input type="text" id="authors" placeholder="输入作者">
+            </div>
+            <div class="form-group year-range">
+                <div>
+                    <label for="startYear">起始年份:</label>
+                    <input type="text" id="startYear" placeholder="起始年份（如 2020）">
+                </div>
+                <div>
+                    <label for="endYear">结束年份:</label>
+                    <input type="text" id="endYear" placeholder="结束年份（如 2023）">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="otherJournals">其他期刊（多个期刊用逗号分隔）:</label>
+                <input type="text" id="otherJournals" placeholder="输入未列出的期刊">
+            </div>
+            <div class="query-buttons">
+                <button type="button" id="preciseQueryButton">精准查询</button>
+                <button type="button" id="fuzzyQueryButton">模糊查询</button>
+            </div>
+            <div class="journal-columns">
+                <!-- UTD24 期刊 -->
+                <div class="journal-column">
+                    <h3>UTD24 期刊</h3>
+                    <label><input type="checkbox" id="selectAllUTD24"> 全选</label>
+                     <div id="utd24-journals">
                     <label><input type="checkbox" name="journal" value="Management Science"> Management Science</label>
                     <label><input type="checkbox" name="journal" value="Manufacturing and Service Operations Management"> Manufacturing and Service Operations Management</label>
                     <label><input type="checkbox" name="journal" value="Production and Operations Management"> Production and Operations Management</label>
@@ -123,13 +190,12 @@
                     <label><input type="checkbox" name="journal" value="Journal of Financial Economics"> Journal of Financial Economics</label>
                     <label><input type="checkbox" name="journal" value="The Review of Financial Studies"> The Review of Financial Studies</label>
                 </div>
-            </div>
-
-            <!-- FT50 期刊 -->
-            <div class="journal-column">
-                <h3>FT50 期刊(除UTD24的27本)</h3>
-                <label><input type="checkbox" id="selectAllFT50"> 全选</label>
-                <div id="ft50-journals">
+                </div>
+                <!-- FT50 期刊 -->
+                <div class="journal-column">
+                    <h3>FT50 期刊</h3>
+                    <label><input type="checkbox" id="selectAllFT50"> 全选</label>
+                    <div id="ft50-journals">
                     <label><input type="checkbox" name="journal" value="Harvard Business Review"> Harvard Business Review</label>
                     <label><input type="checkbox" name="journal" value="Accounting, Organizations and Society"> Accounting, Organizations and Society</label>
                     <label><input type="checkbox" name="journal" value="American Economic Review"> American Economic Review</label>
@@ -158,13 +224,12 @@
                     <label><input type="checkbox" name="journal" value="Sloan Management Review"> Sloan Management Review</label>
                     <label><input type="checkbox" name="journal" value="Strategic Entrepreneurship Journal"> Strategic Entrepreneurship Journal</label>
                 </div>
-            </div>
-
-            <!-- 常用期刊 -->
-            <div class="journal-column">
-                <h3>常用期刊</h3>
-                <label><input type="checkbox" id="selectAllCommon"> 全选</label>
-                <div id="common-journals">
+                </div>
+                <!-- 常用期刊 -->
+                <div class="journal-column">
+                    <h3>常用期刊</h3>
+                    <label><input type="checkbox" id="selectAllCommon"> 全选</label>
+                    <div id="common-journals">
                     <label><input type="checkbox" name="journal" value="European Journal of Operational Research"> European Journal of Operational Research</label>
                     <label><input type="checkbox" name="journal" value="OMEGA-International Journal of Management Science"> OMEGA-International Journal of Management Science</label>
                     <label><input type="checkbox" name="journal" value="International Journal of Production Research"> International Journal of Production Research</label>
@@ -183,13 +248,12 @@
                     <label><input type="checkbox" name="journal" value="Industrial Marketing Management"> Industrial Marketing Management</label>
                     <label><input type="checkbox" name="journal" value="Journal of Business Research"> Journal of Business Research</label>
                 </div>
-            </div>
-
-            <!-- 中文期刊 -->
-            <div class="journal-column">
-                <h3>中文期刊</h3>
-                <label><input type="checkbox" id="selectAllChinese"> 全选</label>
-                <div id="chinese-journals">
+                </div>
+                <!-- 中文期刊 -->
+                <div class="journal-column">
+                    <h3>中文期刊</h3>
+                    <label><input type="checkbox" id="selectAllChinese"> 全选</label>
+                    <div id="chinese-journals">
                     <label><input type="checkbox" name="journal" value="管理世界"> 管理世界</label>
                     <label><input type="checkbox" name="journal" value="管理科学学报"> 管理科学学报</label>
                     <label><input type="checkbox" name="journal" value="中国社会科学"> 中国社会科学</label>
@@ -206,9 +270,13 @@
                     <label><input type="checkbox" name="journal" value="管理评论"> 管理评论</label>
                     <label><input type="checkbox" name="journal" value="系统工程理论与实践"> 系统工程理论与实践</label>
                 </div>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
+
+
+
